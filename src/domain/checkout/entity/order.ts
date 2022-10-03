@@ -24,6 +24,21 @@ export default class Order {
   get items(): OrderItem[] {
     return this._items;
   }
+  addItem(item: OrderItem) {
+    this._items.push(item);
+    this.total();
+  }
+  changeItem(item: OrderItem) {
+    this._items = this.items.filter(x => x.id != item.id);
+    this._items.push(item);
+    this.total();
+  }
+  changeCustumer(id: string) {
+    if (this._customerId.length === 0) {
+      throw new Error("CustomerId is required");
+    }
+    this._customerId=id;
+  }
 
   validate(): boolean {
     if (this._id.length === 0) {
