@@ -1,3 +1,4 @@
+import { Transaction } from "sequelize";
 import RepositoryInterface from "../../../../domain/@shared/repository/repository-interface";
 import Order from "../../../../domain/checkout/entity/order";
 import OrderItem from "../../../../domain/checkout/entity/order_item";
@@ -26,18 +27,18 @@ export default class OrderRepository implements RepositoryInterface<Order>{
     );
   }
   async update(entity: Order): Promise<void> {
+    const transaction = await OrderModel.sequelize.transaction();
     try {
       await OrderItemModel.destroy({
-        where: { order_id: entity.id },
+        where: { order_id: entity.id }, transaction
       });
       await OrderModel.update(
         {
           customer_id: entity.customerId,
           total: entity.total()
         },
-        { where: { id: entity.id } }
+        { where: { id: entity.id }, transaction }
       );
-
       await OrderItemModel.bulkCreate(
         entity.items.map(item => ({
           id: item.id,
@@ -46,10 +47,10 @@ export default class OrderRepository implements RepositoryInterface<Order>{
           product_id: item.productId,
           quantity: item.quantity,
           order_id: entity.id
-        })),
-      );
+        })), { transaction });
+      transaction.commit();
     } catch (error) {
-      console.log(error);
+      await transaction.rollback();
     }
   }
 
