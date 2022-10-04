@@ -34,14 +34,17 @@ export default class OrderItem {
   get quantity(): number {
     return this._quantity;
   }
-  set changeQuantity(quantity: number){
-    if(quantity>0){
+  set changeQuantity(quantity: number) {
+    if (quantity > 0) {
       this._quantity
     }
   }
 
   get price(): number {
     return this._price;
+  }
+  total(): number {
+    return this._price * this._quantity;
   }
 
   validate(): boolean {

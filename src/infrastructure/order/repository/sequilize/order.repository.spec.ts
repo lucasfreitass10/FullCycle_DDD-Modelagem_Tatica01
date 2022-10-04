@@ -170,22 +170,21 @@ describe("Order repository test", () => {
     const product = new Product("2", "Product 2", 50);
     await productRepository.create(product);
 
-    const ordemItem = new OrderItem(
+    const orderItem = new OrderItem(
       "1",
       product.name,
       product.price,
       product.id,
       2
     );
-
-    const order = new Order("2", "2", [ordemItem]);
-
+    const order = new Order("2", "2", [orderItem]);
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
-
+    
     const orderResult = await orderRepository.find(order.id);
 
     expect(order).toStrictEqual(orderResult);
+    
   });
 
   it("should throw an error when order is not found", async () => {
